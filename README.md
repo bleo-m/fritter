@@ -423,7 +423,7 @@ This renders the `index.html` file that will be used to interact with the back
 
 - `403` if the user is not logged in
 
-### `POST **/api/users/followers` - Add to a user’s followers\*\*
+### `POST /api/users/followers` - Add to a user’s followers
 
 **Body**
 
@@ -438,7 +438,7 @@ This renders the `index.html` file that will be used to interact with the back
 - `403` if the user is not logged in
 - `404` if the user to add is empty or not a valid user
 
-### `DELETE **/api/users/followers/:userId?` - Remove from a user’s followers\*\*
+### `DELETE /api/users/followers/:userId?` - Remove from a user’s followers
 
 **Returns**
 
