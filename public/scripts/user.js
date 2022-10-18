@@ -56,7 +56,7 @@ function signOut() {
     .catch(showResponse);
 }
 
-function followUserByUserId() {
+function followUserByUserId(fields) {
   fetch('/api/users/followers', {
     method: 'POST',
     body: JSON.stringify(fields),
