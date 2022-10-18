@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/comma-dangle */
+/* eslint-disable arrow-parens */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 // Show an object on the screen.
@@ -41,6 +43,7 @@ const formsAndHandlers = {
   'create-freet': createFreet,
   'edit-freet': editFreet,
   'delete-freet': deleteFreet,
+  'follow-user-by-user-id': followUserByUserId,
 };
 
 // Attach handlers to forms
