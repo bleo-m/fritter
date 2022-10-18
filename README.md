@@ -4,7 +4,7 @@ Build your own not-quite-[Twitter](https://twitter.com/)!
 
 ## Starter Code
 
-  This starter code implements users (with login/sessions), and freets so that you may focus on implementing your own design ideas.
+This starter code implements users (with login/sessions), and freets so that you may focus on implementing your own design ideas.
 
 The project is structured as follows:
 
@@ -167,36 +167,52 @@ Mongoose allows you to use schema validation if you want to ensure that certain 
 
 within the schema. This tells us that the `content` field must have type `String`, and that it is required for documents in that collection. A freet must have a `String` type value for the `content` field to be added to the freets collection.
 
-## API routes
+# API Reference
 
-The following api routes have already been implemented for you (**Make sure to document all the routes that you have added.**):
+## General
 
-#### `GET /`
+### **`GET /`**
 
-This renders the `index.html` file that will be used to interact with the backend
+This renders the `index.html` file that will be used to interact with the backend
 
-#### `GET /api/freets` - Get all the freets
+---
+
+## Freet
+
+### **`GET /api/freets` - Get all the freets**
 
 **Returns**
 
 - An array of all freets sorted in descending order by date modified
 
-#### `GET /api/freets?author=USERNAME` - Get freets by author
+### **`GET /api/freet?userId=USERNAME` - Get freets only from users that a user follows**
 
 **Returns**
 
-- An array of freets created by user with username `author`
+- An array of freets created by the users that username `userId` follows
 
 **Throws**
 
-- `400` if `author` is not given
-- `404` if `author` is not a recognized username of any user
+- `400` if `userid` is not given
+- `403` if the user is not logged in
+- `404` if `userid` is not a recognized username of any user
 
-#### `POST /api/freets` - Create a new freet
+### **`GET /api/freets?author=USERNAME` - Get freets by author**
+
+**Returns**
+
+- An array of freets created by user with username `author`
+
+**Throws**
+
+- `400` if `author` is not given
+- `404` if `author` is not a recognized username of any user
+
+### **`POST /api/freets` - Create a new freet**
 
 **Body**
 
-- `content` _{string}_ - The content of the freet
+- `content` *{string}* - The content of the freet
 
 **Returns**
 
@@ -205,11 +221,11 @@ This renders the `index.html` file that will be used to interact with the backen
 
 **Throws**
 
-- `403` if the user is not logged in
-- `400` If the freet content is empty or a stream of empty spaces
-- `413` If the freet content is more than 140 characters long
+- `403` if the user is not logged in
+- `400` If the freet content is empty or a stream of empty spaces
+- `413` If the freet content is more than 140 characters long
 
-#### `DELETE /api/freets/:freetId?` - Delete an existing freet
+### **`DELETE /api/freets/:freetId?` - Delete an existing freet**
 
 **Returns**
 
@@ -217,15 +233,15 @@ This renders the `index.html` file that will be used to interact with the backen
 
 **Throws**
 
-- `403` if the user is not logged in
-- `403` if the user is not the author of the freet
-- `404` if the freetId is invalid
+- `403` if the user is not logged in
+- `403` if the user is not the author of the freet
+- `404` if the freetId is invalid
 
-#### `PUT /api/freets/:freetId?` - Update an existing freet
+### **`PUT /api/freets/:freetId?` - Update an existing freet**
 
 **Body**
 
-- `content` _{string}_ - The new content of the freet
+- `content` *{string}* - The new content of the freet
 
 **Returns**
 
@@ -234,18 +250,111 @@ This renders the `index.html` file that will be used to interact with the backen
 
 **Throws**
 
-- `403` if the user is not logged in
-- `404` if the freetId is invalid
-- `403` if the user is not the author of the freet
-- `400` if the new freet content is empty or a stream of empty spaces
-- `413` if the new freet content is more than 140 characters long
+- `403` if the user is not logged in
+- `404` if the freetId is invalid
+- `403` if the user is not the author of the freet
+- `400` if the new freet content is empty or a stream of empty spaces
+- `413` if the new freet content is more than 140 characters long
 
-#### `POST /api/users/session` - Sign in user
+---
+
+## More Concepts Within Freets
+
+### **`POST /api/freets/:freetId?/reactions/:userId?` - Add a user’s reaction to a freet**
 
 **Body**
 
-- `username` _{string}_ - The user's username
-- `password` _{string}_ - The user's password
+- `reaction` *{string}* - The reaction to add to the freet
+- `userId` *{string}* - The user to associate with the reaction
+
+**Returns**
+
+- A success message
+- An object with the updated freet
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid
+- `400` if the reaction is empty or a stream of empty spaces or invalid
+
+### **`PUT /api/freets/:freetId?/reactions/:userId?` - Update a user’s existing reaction on a freet**
+
+**Body**
+
+- `reaction` *{string}* - The reaction to add to the freet
+- `userId` *{string}* - The user to associate with the reaction
+
+**Returns**
+
+- A success message
+- An object with the updated freet
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid or userId is invalid or userId does not have reaction associated with the freetId
+- `400` if the reaction is empty or a stream of empty spaces or invalid
+
+### **`DELETE /api/freets/:freetId?/reactions/:userId?` - Delete a user’s existing reaction on a freet**
+
+**Body**
+
+- `reaction` *{string}* - The reaction to add to the freet
+- `userId` *{string}* - The user to associate with the reaction
+
+**Returns**
+
+- A success message
+- An object with the updated freet
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid or userId is invalid or user never reacted to the freet
+- `400` if the reaction is empty or a stream of empty spaces or invalid
+
+### **`POST /api/freets/:freetId?/comments` - Create a comment on an existing freet**
+
+**Body**
+
+- `reaction` *{string}* - The comment to add to the freet
+- `user` *{string}* - The user to associate with the reaction
+
+**Returns**
+
+- A success message
+- An object with the updated freet
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid
+- `400` if the comment is empty or a stream of empty spaces
+- `413` if the comment content is more than 140 characters long
+
+### **`PUT /api/freets/:freetId?/controversy` - Update an existing freet’s controversy rating**
+
+**Returns**
+
+- A success message
+- An object with the updated freet
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid
+
+---
+
+## User
+
+### **`POST /api/users/session` - Sign in user**
+
+**Body**
+
+- `username` *{string}* - The user's username
+- `password` *{string}* - The user's password
 
 **Returns**
 
@@ -254,11 +363,11 @@ This renders the `index.html` file that will be used to interact with the backen
 
 **Throws**
 
-- `403` if the user is already logged in
-- `400` if username or password is not in correct format format or missing in the req
-- `401` if the user login credentials are invalid
+- `403` if the user is already logged in
+- `400` if username or password is not in correct format format or missing in the req
+- `401` if the user login credentials are invalid
 
-#### `DELETE /api/users/session` - Sign out user
+### **`DELETE /api/users/session` - Sign out user**
 
 **Returns**
 
@@ -266,14 +375,14 @@ This renders the `index.html` file that will be used to interact with the backen
 
 **Throws**
 
-- `403` if user is not logged in
+- `403` if user is not logged in
 
-#### `POST /api/users` - Create an new user account
+### **`POST /api/users` - Create an new user account**
 
 **Body**
 
-- `username` _{string}_ - The user's username
-- `password` _{string}_ - The user's password
+- `username` *{string}* - The user's username
+- `password` *{string}* - The user's password
 
 **Returns**
 
@@ -282,16 +391,16 @@ This renders the `index.html` file that will be used to interact with the backen
 
 **Throws**
 
-- `403` if there is a user already logged in
-- `400` if username or password is in the wrong format
-- `409` if username is already in use
+- `403` if there is a user already logged in
+- `400` if username or password is in the wrong format
+- `409` if username is already in use
 
-#### `PUT /api/users` - Update a user's profile
+### **`PUT /api/users` - Update a user's profile**
 
-**Body** _(no need to add fields that are not being changed)_
+**Body** *(no need to add fields that are not being changed)*
 
-- `username` _{string}_ - The user's username
-- `password` _{string}_ - The user's password
+- `username` *{string}* - The user's username
+- `password` *{string}* - The user's password
 
 **Returns**
 
@@ -300,11 +409,11 @@ This renders the `index.html` file that will be used to interact with the backen
 
 **Throws**
 
-- `403` if the user is not logged in
-- `400` if username or password is in the wrong format
-- `409` if the username is already in use
+- `403` if the user is not logged in
+- `400` if username or password is in the wrong format
+- `409` if the username is already in use
 
-#### `DELETE /api/users` - Delete user
+### **`DELETE /api/users` - Delete user**
 
 **Returns**
 
@@ -312,4 +421,28 @@ This renders the `index.html` file that will be used to interact with the backen
 
 **Throws**
 
-- `403` if the user is not logged in
+- `403` if the user is not logged in
+
+### `````````POST **/api/users/followers` - Add to a user’s followers\*\*
+
+- `user` *{string}* - The user to add to the list of followers
+
+**Returns**
+
+- A success message
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the user to add is empty or not a valid user
+
+### `````````DELETE **/api/users/followers/:userId?` - Remove from a user’s followers\*\*
+
+**Returns**
+
+- A success message
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the userId to remove is empty, not a valid user, or not a follower
