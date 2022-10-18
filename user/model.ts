@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/comma-dangle */
 import type {Types} from 'mongoose';
 import {Schema, model} from 'mongoose';
 
@@ -12,27 +13,39 @@ export type User = {
   username: string;
   password: string;
   dateJoined: Date;
+  followers: Types.ObjectId[];
+  following: Types.ObjectId[];
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table
 // Users stored in this table will have these fields, with the
 // type given by the type property, inside MongoDB
 const UserSchema = new Schema({
-  // The user's username
+  // This user's username
   username: {
     type: String,
-    required: true
+    required: true,
   },
-  // The user's password
+  // This user's password
   password: {
     type: String,
-    required: true
+    required: true,
   },
   // The date the user joined
   dateJoined: {
     type: Date,
-    required: true
-  }
+    required: true,
+  },
+  // This user's followers
+  followers: {
+    type: [Schema.Types.ObjectId],
+    required: true,
+  },
+  // Other users that this user follows
+  following: {
+    type: [Schema.Types.ObjectId],
+    required: true,
+  },
 });
 
 const UserModel = model<User>('User', UserSchema);

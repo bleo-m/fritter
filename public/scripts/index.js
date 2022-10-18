@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 // Show an object on the screen.
 function showObject(obj) {
   const pre = document.getElementById('response');
@@ -10,11 +12,11 @@ function showObject(obj) {
 }
 
 function showResponse(response) {
-  response.json().then(data => {
+  response.json().then((data) => {
     showObject({
       data,
       status: response.status,
-      statusText: response.statusText
+      statusText: response.statusText,
     });
   });
 }
@@ -38,14 +40,14 @@ const formsAndHandlers = {
   'view-freets-by-author': viewFreetsByAuthor,
   'create-freet': createFreet,
   'edit-freet': editFreet,
-  'delete-freet': deleteFreet
+  'delete-freet': deleteFreet,
 };
 
 // Attach handlers to forms
 function init() {
   Object.entries(formsAndHandlers).forEach(([formID, handler]) => {
     const form = document.getElementById(formID);
-    form.onsubmit = e => {
+    form.onsubmit = (e) => {
       e.preventDefault();
       const formData = new FormData(form);
       handler(Object.fromEntries(formData.entries()));

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/comma-dangle */
 import type {HydratedDocument, Types} from 'mongoose';
 import type {User} from './model';
 import UserModel from './model';
@@ -18,10 +19,21 @@ class UserCollection {
    * @param {string} password - The password of the user
    * @return {Promise<HydratedDocument<User>>} - The newly created user
    */
-  static async addOne(username: string, password: string): Promise<HydratedDocument<User>> {
+  static async addOne(
+    username: string,
+    password: string
+  ): Promise<HydratedDocument<User>> {
     const dateJoined = new Date();
+    const followers: Types.ObjectId[] = [];
+    const following: Types.ObjectId[] = [];
 
-    const user = new UserModel({username, password, dateJoined});
+    const user = new UserModel({
+      username,
+      password,
+      dateJoined,
+      followers,
+      following,
+    });
     await user.save(); // Saves user to MongoDB
     return user;
   }
@@ -32,7 +44,9 @@ class UserCollection {
    * @param {string} userId - The userId of the user to find
    * @return {Promise<HydratedDocument<User>> | Promise<null>} - The user with the given username, if any
    */
-  static async findOneByUserId(userId: Types.ObjectId | string): Promise<HydratedDocument<User>> {
+  static async findOneByUserId(
+    userId: Types.ObjectId | string
+  ): Promise<HydratedDocument<User>> {
     return UserModel.findOne({_id: userId});
   }
 
@@ -42,8 +56,12 @@ class UserCollection {
    * @param {string} username - The username of the user to find
    * @return {Promise<HydratedDocument<User>> | Promise<null>} - The user with the given username, if any
    */
-  static async findOneByUsername(username: string): Promise<HydratedDocument<User>> {
-    return UserModel.findOne({username: new RegExp(`^${username.trim()}$`, 'i')});
+  static async findOneByUsername(
+    username: string
+  ): Promise<HydratedDocument<User>> {
+    return UserModel.findOne({
+      username: new RegExp(`^${username.trim()}$`, 'i'),
+    });
   }
 
   /**
@@ -53,10 +71,13 @@ class UserCollection {
    * @param {string} password - The password of the user to find
    * @return {Promise<HydratedDocument<User>> | Promise<null>} - The user with the given username, if any
    */
-  static async findOneByUsernameAndPassword(username: string, password: string): Promise<HydratedDocument<User>> {
+  static async findOneByUsernameAndPassword(
+    username: string,
+    password: string
+  ): Promise<HydratedDocument<User>> {
     return UserModel.findOne({
       username: new RegExp(`^${username.trim()}$`, 'i'),
-      password
+      password,
     });
   }
 
@@ -67,7 +88,10 @@ class UserCollection {
    * @param {Object} userDetails - An object with the user's updated credentials
    * @return {Promise<HydratedDocument<User>>} - The updated user
    */
-  static async updateOne(userId: Types.ObjectId | string, userDetails: any): Promise<HydratedDocument<User>> {
+  static async updateOne(
+    userId: Types.ObjectId | string,
+    userDetails: any
+  ): Promise<HydratedDocument<User>> {
     const user = await UserModel.findOne({_id: userId});
     if (userDetails.password) {
       user.password = userDetails.password as string;
@@ -90,6 +114,30 @@ class UserCollection {
   static async deleteOne(userId: Types.ObjectId | string): Promise<boolean> {
     const user = await UserModel.deleteOne({_id: userId});
     return user !== null;
+  }
+
+  /**
+   * Add to a user's follower's / add to a user's following list
+   *
+   * @param {string} userId - The objectId of the user following another user
+   * @param {string} followeeId - The objectId of the user getting a follower added
+   * @returns {Promise<HydratedDocument<User>>} - The updated user
+   */
+  static async addFollower(
+    userId: Types.ObjectId | string,
+    followeeId: Types.ObjectId | string
+  ): Promise<HydratedDocument<User>> {
+    const user = await UserModel.findOne({_id: userId});
+    const followee = await UserModel.findOne({_id: followeeId});
+
+    // Add the followee's Objectid to the user's following list
+    user.following = [...user.following, followeeId as Types.ObjectId];
+
+    // Add the user's Objectid to the followee's followers list
+    followee.followers = [...followee.followers, userId as Types.ObjectId];
+
+    await user.save();
+    return user;
   }
 }
 

@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/comma-dangle */
 import type {Request, Response} from 'express';
 import express from 'express';
 import FreetCollection from '../freet/collection';
 import UserCollection from './collection';
 import * as userValidator from '../user/middleware';
 import * as util from './util';
+import type {Types} from 'mongoose';
 
 const router = express.Router();
 
@@ -27,16 +29,17 @@ router.post(
     userValidator.isUserLoggedOut,
     userValidator.isValidUsername,
     userValidator.isValidPassword,
-    userValidator.isAccountExists
+    userValidator.isAccountExists,
   ],
   async (req: Request, res: Response) => {
     const user = await UserCollection.findOneByUsernameAndPassword(
-      req.body.username, req.body.password
+      req.body.username,
+      req.body.password
     );
     req.session.userId = user._id.toString();
     res.status(201).json({
       message: 'You have logged in successfully',
-      user: util.constructUserResponse(user)
+      user: util.constructUserResponse(user),
     });
   }
 );
@@ -52,13 +55,11 @@ router.post(
  */
 router.delete(
   '/session',
-  [
-    userValidator.isUserLoggedIn
-  ],
+  [userValidator.isUserLoggedIn],
   (req: Request, res: Response) => {
     req.session.userId = undefined;
     res.status(200).json({
-      message: 'You have been logged out successfully.'
+      message: 'You have been logged out successfully.',
     });
   }
 );
@@ -82,14 +83,17 @@ router.post(
     userValidator.isUserLoggedOut,
     userValidator.isValidUsername,
     userValidator.isUsernameNotAlreadyInUse,
-    userValidator.isValidPassword
+    userValidator.isValidPassword,
   ],
   async (req: Request, res: Response) => {
-    const user = await UserCollection.addOne(req.body.username, req.body.password);
+    const user = await UserCollection.addOne(
+      req.body.username,
+      req.body.password
+    );
     req.session.userId = user._id.toString();
     res.status(201).json({
       message: `Your account was created successfully. You have been logged in as ${user.username}`,
-      user: util.constructUserResponse(user)
+      user: util.constructUserResponse(user),
     });
   }
 );
@@ -112,14 +116,14 @@ router.put(
     userValidator.isUserLoggedIn,
     userValidator.isValidUsername,
     userValidator.isUsernameNotAlreadyInUse,
-    userValidator.isValidPassword
+    userValidator.isValidPassword,
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
     const user = await UserCollection.updateOne(userId, req.body);
     res.status(200).json({
       message: 'Your profile was updated successfully.',
-      user: util.constructUserResponse(user)
+      user: util.constructUserResponse(user),
     });
   }
 );
@@ -134,18 +138,41 @@ router.put(
  */
 router.delete(
   '/',
-  [
-    userValidator.isUserLoggedIn
-  ],
+  [userValidator.isUserLoggedIn],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
     await UserCollection.deleteOne(userId);
     await FreetCollection.deleteMany(userId);
     req.session.userId = undefined;
     res.status(200).json({
-      message: 'Your account has been deleted successfully.'
+      message: 'Your account has been deleted successfully.',
     });
   }
 );
 
 export {router as userRouter};
+
+/**
+ * Add to a user's followers.
+ *
+ * @name POST /api/users/followers
+ *
+ * @param {string} user - user that is getting more followers added
+ * @return {string} - A success message
+ * @throws {403} - If the user is not logged in
+ * @throws {404} - If user to add is emmpty or not a valid user
+ *
+ */
+router.post(
+  '/followers',
+  [userValidator.isUserLoggedIn, userValidator.isValidUsername],
+  async (req: Request, res: Response) => {
+    const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
+    const followeeId = (req.body.user as string) ?? ''; // Will not be an empty string since its validated in isValidUsername
+    const user = await UserCollection.addFollower(userId, followeeId);
+    res.status(200).json({
+      message: 'Followers were updated successfully.',
+      user: util.constructUserResponse(user),
+    });
+  }
+);
