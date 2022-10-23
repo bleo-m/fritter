@@ -1,3 +1,4 @@
+/* eslint-disable arrow-parens */
 /* eslint-disable @typescript-eslint/comma-dangle */
 import type {HydratedDocument, Types} from 'mongoose';
 import type {User} from './model';
@@ -24,8 +25,8 @@ class UserCollection {
     password: string
   ): Promise<HydratedDocument<User>> {
     const dateJoined = new Date();
-    const followers: Types.ObjectId[] = [];
-    const following: Types.ObjectId[] = [];
+    const followers: string[] = [];
+    const following: string[] = [];
 
     const user = new UserModel({
       username,
@@ -51,16 +52,20 @@ class UserCollection {
   }
 
   /**
-   * Find a user by username (case insensitive).
+   * Find a user by username.
    *
    * @param {string} username - The username of the user to find
    * @return {Promise<HydratedDocument<User>> | Promise<null>} - The user with the given username, if any
    */
   static async findOneByUsername(
-    username: string
+    username: string,
+    caseSensitive = true
   ): Promise<HydratedDocument<User>> {
+    const cleanedUpUser = caseSensitive
+      ? new RegExp(`^${username.trim()}$`)
+      : new RegExp(`^${username.trim()}$`, 'i');
     return UserModel.findOne({
-      username: new RegExp(`^${username.trim()}$`, 'i'),
+      username: cleanedUpUser,
     });
   }
 
@@ -117,7 +122,7 @@ class UserCollection {
   }
 
   /**
-   * Add to a user's follower's / add to a user's following list
+   * Add to a user's follower's / following list
    *
    * @param {string} userId - The objectId of the user following another user
    * @param {string} followeeId - The objectId of the user getting a follower added
@@ -125,16 +130,49 @@ class UserCollection {
    */
   static async addFollower(
     userId: Types.ObjectId | string,
-    followeeId: Types.ObjectId | string
+    followeeName: string
   ): Promise<HydratedDocument<User>> {
+    console.log(userId);
     const user = await UserModel.findOne({_id: userId});
-    const followee = await UserModel.findOne({_id: followeeId});
+    const followee = await UserCollection.findOneByUsername(followeeName);
 
-    // Add the followee's Objectid to the user's following list
-    user.following = [...user.following, followeeId as Types.ObjectId];
+    if (!user.following.includes(followeeName)) {
+      // Add the followee's username to the user's following list
+      user.following = [...user.following, followeeName];
 
-    // Add the user's Objectid to the followee's followers list
-    followee.followers = [...followee.followers, userId as Types.ObjectId];
+      // Add the user's username to the followee's followers list
+      followee.followers = [...followee.followers, user.username];
+    }
+
+    await user.save();
+    return user;
+  }
+
+  /**
+   * Remove from a user's followers / following list
+   *
+   * @param {string} userId - The objectId of the user following another user
+   * @param {string} followeeId - The objectId of the user getting a follower added
+   * @returns {Promise<HydratedDocument<User>>} - The updated user
+   */
+  static async removeFollower(
+    userId: Types.ObjectId | string,
+    followeeName: string
+  ): Promise<HydratedDocument<User>> {
+    console.log(userId);
+    const user = await UserModel.findOne({_id: userId});
+    console.log(user);
+    const followee = await UserModel.findOne({username: followeeName});
+
+    if (user.following.includes(followeeName)) {
+      // Remove the followee's username from the user's following list
+      user.following = user.following.filter((name) => name !== followeeName);
+
+      // Remove the user's username from the followee's followers list
+      followee.following = followee.following.filter(
+        (name) => name !== user.username
+      );
+    }
 
     await user.save();
     return user;

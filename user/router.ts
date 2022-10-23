@@ -155,9 +155,34 @@ export {router as userRouter};
 /**
  * Add to a user's followers.
  *
- * @name POST /api/users/followers
+ * @name POST /api/users/:user/followers
  *
- * @param {string} user - user that is getting more followers added
+ * @param {string} user - user that is getting more followers
+ * @return {string} - A success message
+ * @throws {403} - If the user is not logged in
+ * @throws {404} - If user to add is emmpty or not a valid user
+ *
+ */
+router.post(
+  '/:user/followers',
+  [userValidator.isUserLoggedIn, userValidator.isValidUsername],
+  async (req: Request, res: Response) => {
+    const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
+    const followeeName = req.params.user ?? ''; // Will not be an empty string since its validated in isValidUsername
+    const user = await UserCollection.addFollower(userId, followeeName);
+    res.status(200).json({
+      message: 'Followers were updated successfully.',
+      user: util.constructUserResponse(user),
+    });
+  }
+);
+
+/**
+ * Remove from a user's followers.
+ *
+ * @name DELETE /api/users/followers
+ *
+ * @param {string} user - user that is getting a follower removed
  * @return {string} - A success message
  * @throws {403} - If the user is not logged in
  * @throws {404} - If user to add is emmpty or not a valid user
@@ -169,7 +194,7 @@ router.post(
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
     const followeeId = (req.body.user as string) ?? ''; // Will not be an empty string since its validated in isValidUsername
-    const user = await UserCollection.addFollower(userId, followeeId);
+    const user = await UserCollection.removeFollower(userId, followeeId);
     res.status(200).json({
       message: 'Followers were updated successfully.',
       user: util.constructUserResponse(user),

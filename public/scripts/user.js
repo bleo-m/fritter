@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/comma-dangle */
 /**
  * Fields is an object mapping the names of the form inputs to the values typed in
@@ -56,8 +59,9 @@ function signOut() {
     .catch(showResponse);
 }
 
-function followUserByUserId(fields) {
-  fetch('/api/users/followers', {
+function followUserByUserName(fields) {
+  console.log(fields);
+  fetch(`/api/users/${fields.user}/followers`, {
     method: 'POST',
     body: JSON.stringify(fields),
     headers: {'Content-Type': 'application/json'},

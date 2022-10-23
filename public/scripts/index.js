@@ -43,7 +43,7 @@ const formsAndHandlers = {
   'create-freet': createFreet,
   'edit-freet': editFreet,
   'delete-freet': deleteFreet,
-  'follow-user-by-user-id': followUserByUserId,
+  'follow-user-by-user-id': followUserByUserName,
 };
 
 // Attach handlers to forms

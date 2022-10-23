@@ -13,8 +13,8 @@ export type User = {
   username: string;
   password: string;
   dateJoined: Date;
-  followers: Types.ObjectId[];
-  following: Types.ObjectId[];
+  followers: string[];
+  following: string[];
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table
@@ -38,12 +38,12 @@ const UserSchema = new Schema({
   },
   // This user's followers
   followers: {
-    type: [Schema.Types.ObjectId],
+    type: [String],
     required: true,
   },
   // Other users that this user follows
   following: {
-    type: [Schema.Types.ObjectId],
+    type: [String],
     required: true,
   },
 });
