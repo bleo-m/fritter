@@ -2,26 +2,21 @@ import type {NextFunction, Request, Response} from 'express';
 import express from 'express';
 import CommentCollection from './collection';
 import * as userValidator from '../user/middleware';
+import * as freetValidator from '../freet/middleware';
 import * as commentValidator from '../comment/middleware';
 import * as util from './util';
+import {Types} from 'mongoose';
 
 const router = express.Router();
 
 /**
- * Get all comments
+ * Get all the comments
  *
  * @name GET /api/comments
  *
- * @return {CommentResponse[]} - An array of comments
- * @throws {400} - If request is formatted incorrectly
- *
+ * @return {FreetResponse[]} - A list of all the comments sorted in descending
+ *                      order by date modified
  */
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
-  const allComments = await CommentCollection.findAll();
-  const response = allComments.map(util.constructCommentResponse);
-  res.status(200).json(response);
-});
-
 /**
  * Get comments by freet id.
  *
@@ -34,18 +29,19 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
  */
 router.get(
   '/',
-  [commentValidator.isFreetExistsInQuery],
   async (req: Request, res: Response, next: NextFunction) => {
-    // Check if authorId query parameter was supplied
+    // Check if freetId query parameter was supplied
     if (req.query.freetId !== undefined) {
-      res.status(400).json({
-        error: {
-          CommentNotFound: 'No Freet Id provided'
-        }
-      });
+      next();
       return;
     }
 
+    const allComments = await CommentCollection.findAll();
+    const response = allComments.map(util.constructCommentResponse);
+    res.status(200).json(response);
+  },
+  [freetValidator.isFreetExistsInQuery],
+  async (req: Request, res: Response) => {
     const {freetId} = req.query;
 
     const allComments = await CommentCollection.findAllByFreetId(
@@ -69,7 +65,7 @@ router.get(
  */
 router.post(
   '/:freetId',
-  [commentValidator.isFreetExistsInParam],
+  [freetValidator.isFreetExistsInParam],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
     console.log(req.body.content);

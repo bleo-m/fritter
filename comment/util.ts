@@ -5,7 +5,7 @@ import type {Comment, PopulatedComment} from '../comment/model';
 type CommentResponse = {
   _id: string;
   author: string;
-  freet: string;
+  freetId: string;
   dateCreated: string;
   content: string;
   dateModified: string;
@@ -41,7 +41,7 @@ const constructCommentResponse = (
     ...commentCopy,
     _id: commentCopy._id.toString(),
     author: username,
-    freet: commentCopy.freetId.content,
+    freetId: commentCopy.freetId._id.toString(),
     dateCreated: formatDate(comment.dateCreated),
     dateModified: formatDate(comment.dateModified)
   };

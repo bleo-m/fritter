@@ -33,7 +33,7 @@ class CommentCollection {
       freetId,
       dateCreated: date,
       content,
-      dateModified: date,
+      dateModified: date
     });
     await Comment.save(); // Saves Comment to MongoDB
     return Comment.populate('authorId');
@@ -77,13 +77,15 @@ class CommentCollection {
   /**
    * Get all the Comments for a given Freet
    *
-   * @param {string} username - The username of author of the Comments
+   * @param {string} freetId - The freetId of the freet
    * @return {Promise<HydratedDocument<Comment>[]>} - An array of all of the Comments
    */
   static async findAllByFreetId(
-    freet: Types.ObjectId | string
+    freetId: Types.ObjectId | string
   ): Promise<Array<HydratedDocument<Comment>>> {
-    return CommentModel.find({freetId: freet}).populate('freetId');
+    const freet = await FreetCollection.findOne(freetId);
+    console.log('balls in me moufffffffff');
+    return CommentModel.find({freetId: freet._id}).populate('freetId');
   }
 
   /**
