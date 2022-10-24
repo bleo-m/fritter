@@ -1,11 +1,24 @@
 import type {NextFunction, Request, Response} from 'express';
 import express from 'express';
 import CommentCollection from './collection';
-import * as userValidator from '../user/middleware';
-import * as freetValidator from '../freet/middleware';
 import * as util from './util';
 
 const router = express.Router();
+
+/**
+ * Get all comments
+ *
+ * @name GET /api/comments
+ *
+ * @return {CommentResponse[]} - An array of comments
+ * @throws {400} - If request is formatted incorrectly
+ *
+ */
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+  const allComments = await CommentCollection.findAll();
+  const response = allComments.map(util.constructCommentResponse);
+  res.status(200).json(response);
+});
 
 /**
  * Get comments by freet id.
@@ -40,7 +53,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 /**
  * Create a new Comment on a Freet.
  *
- * @name POST /api/comment/:freetId
+ * @name POST /api/comments/:freetId
  *
  * @param {string} content - The content of the comment
  * @return {CommentResponse} - The created comment
@@ -50,6 +63,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
  */
 router.post('/:freetId', async (req: Request, res: Response) => {
   const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
+  console.log(req.body.content);
   const comment = await CommentCollection.addOne(
     userId,
     req.params.freetId,
@@ -62,4 +76,4 @@ router.post('/:freetId', async (req: Request, res: Response) => {
   });
 });
 
-export {router as freetRouter};
+export {router as commentRouter};

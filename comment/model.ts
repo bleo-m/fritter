@@ -28,7 +28,7 @@ export type PopulatedComment = {
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table
-// Freets stored in this table will have these fields, with the
+// Comments stored in this table will have these fields, with the
 // type given by the type property, inside MongoDB
 const CommentSchema = new Schema<Comment>({
   // The author userId
@@ -36,30 +36,30 @@ const CommentSchema = new Schema<Comment>({
     // Use Types.ObjectId outside of the schema
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'User',
+    ref: 'User'
   },
   freetId: {
     // Use Types.ObjectId outside of the schema
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'Freet',
+    ref: 'Freet'
   },
-  // The date the freet was created
+  // The date the comment was created
   dateCreated: {
     type: Date,
-    required: true,
+    required: true
   },
-  // The content of the freet
+  // The content of the comment
   content: {
     type: String,
-    required: true,
+    required: true
   },
-  // The date the freet was modified
+  // The date the comment was modified
   dateModified: {
     type: Date,
-    required: true,
-  },
+    required: true
+  }
 });
 
-const CommentModel = model<Comment>('Freet', CommentSchema);
+const CommentModel = model<Comment>('Comment', CommentSchema);
 export default CommentModel;

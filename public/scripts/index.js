@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/comma-dangle */
 /* eslint-disable arrow-parens */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -18,7 +17,7 @@ function showResponse(response) {
     showObject({
       data,
       status: response.status,
-      statusText: response.statusText,
+      statusText: response.statusText
     });
   });
 }
@@ -44,6 +43,9 @@ const formsAndHandlers = {
   'edit-freet': editFreet,
   'delete-freet': deleteFreet,
   'follow-user-by-user-id': followUserByUserName,
+  'comment-on-freet-by-freetId': commentOnFreetByFreetId,
+  'get-all-comments': getAllComments,
+  'get-comments-by-freetId': getCommentsByFreetId
 };
 
 // Attach handlers to forms

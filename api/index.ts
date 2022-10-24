@@ -1,3 +1,5 @@
+/* eslint-disable arrow-parens */
+/* eslint-disable @typescript-eslint/quotes */
 // This file must be in the /api folder for Vercel to detect it as a serverless function
 import type {Request, Response} from 'express';
 import express from 'express';
@@ -11,6 +13,7 @@ import dotenv from 'dotenv';
 import * as userValidator from '../user/middleware';
 import {userRouter} from '../user/router';
 import {freetRouter} from '../freet/router';
+import {commentRouter} from '../comment/router';
 
 // Load environmental variables
 dotenv.config({});
@@ -18,20 +21,20 @@ dotenv.config({});
 // Connect to mongoDB
 const mongoConnectionUrl = process.env.MONGO_SRV;
 if (!mongoConnectionUrl) {
-  throw new Error('Please add the MongoDB connection SRV as \'MONGO_SRV\'');
+  throw new Error("Please add the MongoDB connection SRV as 'MONGO_SRV'");
 }
 
 mongoose
   .connect(mongoConnectionUrl)
-  .then(m => {
+  .then((m) => {
     console.log('Connected to MongoDB');
     const db = m.connection;
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(`Error connecting to MongoDB: ${err.message as string}`);
   });
 
-mongoose.connection.on('error', err => {
+mongoose.connection.on('error', (err) => {
   console.error(err);
 });
 
@@ -59,11 +62,13 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
 // Initialize cookie session
-app.use(session({
-  secret: '61040',
-  resave: true,
-  saveUninitialized: false
-}));
+app.use(
+  session({
+    secret: '61040',
+    resave: true,
+    saveUninitialized: false
+  })
+);
 
 // This makes sure that if a user is logged in, they still exist in the database
 app.use(userValidator.isCurrentSessionUserExists);
@@ -76,6 +81,7 @@ app.get('/', (req: Request, res: Response) => {
 // Add routers from routes folder
 app.use('/api/users', userRouter);
 app.use('/api/freets', freetRouter);
+app.use('/api/comments', commentRouter);
 
 // Catch all the other routes and display error message
 app.all('*', (req: Request, res: Response) => {
@@ -85,5 +91,7 @@ app.all('*', (req: Request, res: Response) => {
 // Create server to listen to request at specified port
 const server = http.createServer(app);
 server.listen(app.get('port'), () => {
-  console.log(`Express server running at http://localhost:${app.get('port') as number}`);
+  console.log(
+    `Express server running at http://localhost:${app.get('port') as number}`
+  );
 });
