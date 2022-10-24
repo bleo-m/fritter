@@ -17,7 +17,8 @@ type FreetResponse = {
  * @param {Date} date - A date object
  * @returns {string} - formatted date as string
  */
-const formatDate = (date: Date): string => moment(date).format('MMMM Do YYYY, h:mm:ss a');
+const formatDate = (date: Date): string =>
+  moment(date).format('MMMM Do YYYY, h:mm:ss a');
 
 /**
  * Transform a raw Freet object from the database into an object
@@ -26,13 +27,15 @@ const formatDate = (date: Date): string => moment(date).format('MMMM Do YYYY, h:
  * @param {HydratedDocument<Freet>} freet - A freet
  * @returns {FreetResponse} - The freet object formatted for the frontend
  */
-const constructFreetResponse = (freet: HydratedDocument<Freet>): FreetResponse => {
+const constructFreetResponse = (
+  freet: HydratedDocument<Freet>
+): FreetResponse => {
   const freetCopy: PopulatedFreet = {
     ...freet.toObject({
       versionKey: false // Cosmetics; prevents returning of __v property
     })
   };
-  const {username} = freetCopy.authorId;
+  const username = freetCopy.authorId.username ?? '';
   delete freetCopy.authorId;
   return {
     ...freetCopy,
@@ -43,6 +46,4 @@ const constructFreetResponse = (freet: HydratedDocument<Freet>): FreetResponse =
   };
 };
 
-export {
-  constructFreetResponse
-};
+export {constructFreetResponse};

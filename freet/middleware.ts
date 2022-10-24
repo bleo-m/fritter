@@ -104,7 +104,6 @@ const isFreetExistsInQuery = async (
   next: NextFunction
 ) => {
   const {freetId} = req.query;
-  console.log(freetId);
   const freet = await FreetCollection.findOne(freetId as string);
   if (!freet) {
     res.status(404).json({

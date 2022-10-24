@@ -15,6 +15,7 @@ import {userRouter} from '../user/router';
 import {freetRouter} from '../freet/router';
 import {commentRouter} from '../comment/router';
 import {reactionRouter} from '../reaction/router';
+import {controversyWarningRouter} from '../controversy_warning/router';
 
 // Load environmental variables
 dotenv.config({});
@@ -22,7 +23,7 @@ dotenv.config({});
 // Connect to mongoDB
 const mongoConnectionUrl = process.env.MONGO_SRV;
 if (!mongoConnectionUrl) {
-  throw new Error("Please add the MongoDB connection SRV as 'MONGO_SRV'");
+  throw new Error("Please add the MongoDB conn ection SRV as 'MONGO_SRV'");
 }
 
 mongoose
@@ -84,6 +85,7 @@ app.use('/api/users', userRouter);
 app.use('/api/freets', freetRouter);
 app.use('/api/comments', commentRouter);
 app.use('/api/reactions', reactionRouter);
+app.use('/api/controversy-warnings', controversyWarningRouter);
 
 // Catch all the other routes and display error message
 app.all('*', (req: Request, res: Response) => {

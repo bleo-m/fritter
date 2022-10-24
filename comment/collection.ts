@@ -84,7 +84,6 @@ class CommentCollection {
     freetId: Types.ObjectId | string
   ): Promise<Array<HydratedDocument<Comment>>> {
     const freet = await FreetCollection.findOne(freetId);
-    console.log('balls in me moufffffffff');
     return CommentModel.find({freetId: freet._id}).populate('freetId');
   }
 

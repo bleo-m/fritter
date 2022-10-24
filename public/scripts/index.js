@@ -47,7 +47,10 @@ const formsAndHandlers = {
   'get-all-comments': getAllComments,
   'get-comments-by-freetId': getCommentsByFreetId,
   'react-to-freet-by-freetId': reactToFreetByFreetId,
-  'update-reaction-to-freet-by-freetId': updateReactToFreetByFreetId
+  'update-reaction-to-freet-by-freetId': updateReactToFreetByFreetId,
+  'report-freets-by-freetId': reportFreetByFreetId,
+  'add-warning-to-freet-by-freetId': addWarningToFreetByFreetId,
+  'view-controversy-by-freetId': getControversyByFreetId
 };
 
 // Attach handlers to forms

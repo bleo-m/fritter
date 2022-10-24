@@ -66,10 +66,14 @@ router.get(
  */
 router.post(
   '/:freetId',
-  [freetValidator.isFreetExistsInParam, userValidator.isUserLoggedIn],
+  [
+    freetValidator.isFreetExistsInParam,
+    userValidator.isUserLoggedIn,
+    reactionValidator.isValidEmotion,
+    reactionValidator.userHasReactedAlready
+  ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    console.log(req.body.emotion);
     const reaction = await ReactionCollection.addOne(
       userId,
       req.params.freetId,
@@ -96,7 +100,11 @@ router.post(
  */
 router.put(
   '/:freetId',
-  [freetValidator.isFreetExistsInParam, userValidator.isUserLoggedIn],
+  [
+    freetValidator.isFreetExistsInParam,
+    userValidator.isUserLoggedIn,
+    reactionValidator.isValidEmotion
+  ],
   async (req: Request, res: Response) => {
     const reaction = await ReactionCollection.updateOne(
       req.session.userId,

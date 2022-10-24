@@ -33,7 +33,7 @@ class UserCollection {
       password,
       dateJoined,
       followers,
-      following,
+      following
     });
     await user.save(); // Saves user to MongoDB
     return user;
@@ -65,7 +65,7 @@ class UserCollection {
       ? new RegExp(`^${username.trim()}$`)
       : new RegExp(`^${username.trim()}$`, 'i');
     return UserModel.findOne({
-      username: cleanedUpUser,
+      username: cleanedUpUser
     });
   }
 
@@ -82,7 +82,7 @@ class UserCollection {
   ): Promise<HydratedDocument<User>> {
     return UserModel.findOne({
       username: new RegExp(`^${username.trim()}$`, 'i'),
-      password,
+      password
     });
   }
 
@@ -132,7 +132,6 @@ class UserCollection {
     userId: Types.ObjectId | string,
     followeeName: string
   ): Promise<HydratedDocument<User>> {
-    console.log(userId);
     const user = await UserModel.findOne({_id: userId});
     const followee = await UserCollection.findOneByUsername(followeeName);
 
@@ -159,9 +158,7 @@ class UserCollection {
     userId: Types.ObjectId | string,
     followeeName: string
   ): Promise<HydratedDocument<User>> {
-    console.log(userId);
     const user = await UserModel.findOne({_id: userId});
-    console.log(user);
     const followee = await UserModel.findOne({username: followeeName});
 
     if (user.following.includes(followeeName)) {

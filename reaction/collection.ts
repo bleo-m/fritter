@@ -88,6 +88,23 @@ class ReactionCollection {
   }
 
   /**
+   * Get a reaction from a user on a specific freet
+   *
+   * @param {string} freet - The freetId of a freet
+   * @param {string} user - The userId of a user
+   * @return {Promise<HydratedDocument<Reaction>>} - The reaction
+   */
+  static async findByFreetIdAndUserId(
+    freet: Types.ObjectId,
+    user: Types.ObjectId
+  ): Promise<HydratedDocument<Reaction>> {
+    return ReactionModel.findOne({freetId: freet, userId: user}).populate(
+      'authorId',
+      'fritterId'
+    );
+  }
+
+  /**
    * Update a reaction with the new emotion
    *
    * @param {string} reactionId - The id of the reaction to be updated
@@ -103,7 +120,6 @@ class ReactionCollection {
     const reaction = await ReactionModel.find({freetId: freet}).findOne({
       authorId: userId
     });
-    console.log(reaction);
     reaction.emotion = emotion;
     reaction.dateModified = new Date();
     await reaction.save();

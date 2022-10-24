@@ -11,7 +11,7 @@ function createUser(fields) {
   fetch('/api/users', {
     method: 'POST',
     body: JSON.stringify(fields),
-    headers: {'Content-Type': 'application/json'},
+    headers: {'Content-Type': 'application/json'}
   })
     .then(showResponse)
     .catch(showResponse);
@@ -21,7 +21,7 @@ function changeUsername(fields) {
   fetch('/api/users', {
     method: 'PUT',
     body: JSON.stringify(fields),
-    headers: {'Content-Type': 'application/json'},
+    headers: {'Content-Type': 'application/json'}
   })
     .then(showResponse)
     .catch(showResponse);
@@ -31,7 +31,7 @@ function changePassword(fields) {
   fetch('/api/users', {
     method: 'PUT',
     body: JSON.stringify(fields),
-    headers: {'Content-Type': 'application/json'},
+    headers: {'Content-Type': 'application/json'}
   })
     .then(showResponse)
     .catch(showResponse);
@@ -47,7 +47,7 @@ function signIn(fields) {
   fetch('/api/users/session', {
     method: 'POST',
     body: JSON.stringify(fields),
-    headers: {'Content-Type': 'application/json'},
+    headers: {'Content-Type': 'application/json'}
   })
     .then(showResponse)
     .catch(showResponse);
@@ -60,11 +60,10 @@ function signOut() {
 }
 
 function followUserByUserName(fields) {
-  console.log(fields);
   fetch(`/api/users/${fields.user}/followers`, {
     method: 'POST',
     body: JSON.stringify(fields),
-    headers: {'Content-Type': 'application/json'},
+    headers: {'Content-Type': 'application/json'}
   })
     .then(showResponse)
     .catch(showResponse);

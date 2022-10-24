@@ -68,7 +68,6 @@ router.post(
   [freetValidator.isFreetExistsInParam],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    console.log(req.body.content);
     const comment = await CommentCollection.addOne(
       userId,
       req.params.freetId,
