@@ -45,7 +45,9 @@ const formsAndHandlers = {
   'follow-user-by-user-id': followUserByUserName,
   'comment-on-freet-by-freetId': commentOnFreetByFreetId,
   'get-all-comments': getAllComments,
-  'get-comments-by-freetId': getCommentsByFreetId
+  'get-comments-by-freetId': getCommentsByFreetId,
+  'react-to-freet-by-freetId': reactToFreetByFreetId,
+  'update-reaction-to-freet-by-freetId': updateReactToFreetByFreetId
 };
 
 // Attach handlers to forms

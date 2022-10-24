@@ -95,10 +95,15 @@ class ReactionCollection {
    * @return {Promise<HydratedDocument<Reaction>>} - The newly updated reaction
    */
   static async updateOne(
-    reactionId: Types.ObjectId | string,
+    userId: Types.ObjectId | string,
+    freetId: Types.ObjectId | string,
     emotion: emotion
   ): Promise<HydratedDocument<Reaction>> {
-    const reaction = await ReactionModel.findOne({_id: reactionId});
+    const freet = await FreetCollection.findOne(freetId);
+    const reaction = await ReactionModel.find({freetId: freet}).findOne({
+      authorId: userId
+    });
+    console.log(reaction);
     reaction.emotion = emotion;
     reaction.dateModified = new Date();
     await reaction.save();

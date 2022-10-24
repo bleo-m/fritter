@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 function commentOnFreetByFreetId(fields) {
-  console.log(fields.commentContent);
+  console.log(fields);
   fetch(`/api/comments/${fields.freetId}`, {
     method: 'POST',
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
