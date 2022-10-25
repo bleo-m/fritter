@@ -1,11 +1,11 @@
+/* eslint-disable no-warning-comments */
 import type {HydratedDocument} from 'mongoose';
 import moment from 'moment';
 import type {Reaction, PopulatedReaction, emotion} from '../Reaction/model';
 
 type ReactionResponse = {
   _id: string;
-  author: string;
-  freet: string;
+  freetId: string;
   emotion: string;
   dateCreated: string;
   dateModified: string;
@@ -35,13 +35,14 @@ const constructReactionResponse = (
       versionKey: false // Cosmetics; prevents returning of __v property
     })
   };
-  const {username} = reactionCopy.authorId;
-  delete reactionCopy.authorId;
+  delete reactionCopy.authorId.password;
+  delete reactionCopy.authorId.dateJoined;
+  delete reactionCopy.authorId.followers;
+  delete reactionCopy.authorId.following;
   return {
     ...reactionCopy,
     _id: reactionCopy._id.toString(),
-    author: username,
-    freet: reactionCopy.freetId.content,
+    freetId: reactionCopy.freetId._id.toString(), // TODO: Subject to change
     emotion: `${reactionCopy.emotion}`, // Turn emotion type into a string for frontend readability
     dateCreated: formatDate(reaction.dateCreated),
     dateModified: formatDate(reaction.dateModified)

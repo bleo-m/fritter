@@ -119,4 +119,35 @@ router.put(
   }
 );
 
+/**
+ * Delete a logged in user's Reaction on a Freet.
+ *
+ * @name DELETE /api/reactions/:freetId/
+ *
+ * @return {ReactionResponse} - The created reaction
+ * @throws {403} - If the user is not logged in
+ * @throws {400} - If the freet emotion is empty or a stream of empty spaces
+ * @throws {413} - If the freet emotion is more than 140 characters long
+ */
+router.delete(
+  '/:freetId',
+  [freetValidator.isFreetExistsInParam, userValidator.isUserLoggedIn],
+  async (req: Request, res: Response) => {
+    const success = await ReactionCollection.deleteOneByFreetIdAndUserId(
+      req.params.freetId,
+      req.session.userId
+    );
+    if (success) {
+      res.status(201).json({
+        message: 'Your reaction was deleted successfully.'
+      });
+    } else {
+      res.status(500).json({
+        message:
+          'Internal server error. Your reaction was NOT able to be deleted.'
+      });
+    }
+  }
+);
+
 export {router as reactionRouter};

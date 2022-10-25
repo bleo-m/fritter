@@ -80,11 +80,12 @@ class ReactionCollection {
    * @return {Promise<HydratedDocument<Reaction>[]>} - An array of all of the reactions
    */
   static async findAllByFreetId(
-    freet: Types.ObjectId | string
+    freetId: Types.ObjectId | string
   ): Promise<Array<HydratedDocument<Reaction>>> {
-    return ReactionModel.find({freetId: freet})
+    const freet = await FreetCollection.findOne(freetId);
+    return ReactionModel.find({freetId: freet._id})
       .sort({emotion: 'asc'})
-      .populate('freetId');
+      .populate('authorId');
   }
 
   /**
@@ -95,13 +96,16 @@ class ReactionCollection {
    * @return {Promise<HydratedDocument<Reaction>>} - The reaction
    */
   static async findByFreetIdAndUserId(
-    freet: Types.ObjectId,
+    freetId: Types.ObjectId | string,
     user: Types.ObjectId
   ): Promise<HydratedDocument<Reaction>> {
-    return ReactionModel.findOne({freetId: freet, userId: user}).populate(
-      'authorId',
-      'fritterId'
-    );
+    const freet = await FreetCollection.findOne(freetId);
+    const reaction = await ReactionModel.find({
+      freetId: freet._id
+    })
+      .findOne({authorId: user})
+      .populate('authorId', 'fritterId');
+    return reaction;
   }
 
   /**
@@ -137,6 +141,24 @@ class ReactionCollection {
   ): Promise<boolean> {
     const reaction = await ReactionModel.deleteOne({_id: reactionId});
     return reaction !== null;
+  }
+
+  /**
+   * Delete a reaction with given reactionId.
+   *
+   * @param {string} reactionId - The reactionId of reaction to delete
+   * @return {Promise<Boolean>} - true if the reaction has been deleted, false otherwise
+   */
+  static async deleteOneByFreetIdAndUserId(
+    freet: Types.ObjectId | string,
+    user: Types.ObjectId
+  ): Promise<boolean> {
+    const reaction = await ReactionCollection.findByFreetIdAndUserId(
+      freet,
+      user
+    );
+    const isDeleted = await ReactionModel.deleteOne({_id: reaction._id});
+    return isDeleted !== null;
   }
 
   /**

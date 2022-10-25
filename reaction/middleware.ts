@@ -61,6 +61,29 @@ const userHasReactedAlready = async (
     freet._id,
     req.session.userId
   );
+
+  if (reaction) {
+    res.status(403).json({
+      error:
+        'UserId already has a reaction associtated with this post. Use a PUT request to update it, or DELETE it before POSTing a new one.'
+    });
+    return;
+  }
+
+  next();
+};
+
+const userCanDeleteReaction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const freet = await FreetCollection.findOne(req.params.freetId);
+  const reaction = await ReactionCollection.findByFreetIdAndUserId(
+    freet._id,
+    req.session.userId
+  );
+
   if (reaction) {
     res.status(403).json({
       error:
