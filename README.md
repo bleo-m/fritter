@@ -169,7 +169,7 @@ within the schema. This tells us that the `content` field must have type `String
 
 # API Reference
 
-## General
+# General
 
 ### **`GET /`**
 
@@ -177,7 +177,7 @@ This renders the `index.html` file that will be used to interact with the back
 
 ---
 
-## Freet
+# Freet
 
 ### **`GET /api/freets` - Get all the freets**
 
@@ -314,11 +314,11 @@ This renders the `index.html` file that will be used to interact with the back
 - `404` if the freetId is invalid or userId is invalid or user never reacted to the freet
 - `400` if the reaction is empty or a stream of empty spaces or invalid
 
-### **`POST /api/freets/:freetId?/comments` - Create a comment on an existing freet**
+### **`POST /api/freets/:freetId?/comments` - Create a comment on an existing Freet**
 
 **Body**
 
-- `reaction` *{string}* - The comment to add to the freet
+- `content` *{string}* - The content of the comment to add to the Freet
 - `user` *{string}* - The user to associate with the reaction
 
 **Returns**
@@ -333,7 +333,7 @@ This renders the `index.html` file that will be used to interact with the back
 - `400` if the comment is empty or a stream of empty spaces
 - `413` if the comment content is more than 140 characters long
 
-### **`PUT /api/freets/:freetId?/controversy` - Update an existing freet’s controversy rating**
+### **`PUT /api/freets/:freetId?/controversy` - Update an existing Freet’s controversy rating**
 
 **Returns**
 
@@ -347,7 +347,7 @@ This renders the `index.html` file that will be used to interact with the back
 
 ---
 
-## User
+# User
 
 ### **`POST /api/users/session` - Sign in user**
 
@@ -423,11 +423,7 @@ This renders the `index.html` file that will be used to interact with the back
 
 - `403` if the user is not logged in
 
-### `POST /api/users/followers` - Add to a user’s followers
-
-**Body**
-
-- `user` *{string}* - The user to add to the list of followers
+### **`GET /api/users/:user?/followers` - Get a user’s followers**
 
 **Returns**
 
@@ -438,7 +434,20 @@ This renders the `index.html` file that will be used to interact with the back
 - `403` if the user is not logged in
 - `404` if the user to add is empty or not a valid user
 
-### `DELETE /api/users/followers/:userId?` - Remove from a user’s followers
+### **`POST /api/users/:user?/followers` - Add current user to a user’s list of followers**
+
+The current signed in user will bet set to follow the user in the body of the request
+
+**Returns**
+
+- A success message
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the user to add is empty or not a valid user
+
+### **`DELETE /api/users/:user?/followers/` - Remove current user from a user’s followers**
 
 **Returns**
 
@@ -448,3 +457,148 @@ This renders the `index.html` file that will be used to interact with the back
 
 - `403` if the user is not logged in
 - `404` if the userId to remove is empty, not a valid user, or not a follower
+
+# Comment
+
+### **`GET /api/comments?freetId=id` - Get all comments posted on a certain Freet**
+
+**Returns**
+
+- An array of comments created under the Freet with the freetID that `freetId` follows
+
+**Throws**
+
+- `400` if `freetDd` is not given
+- `403` if the user is not logged in
+- `404` if `freetId` is not a recognized freetId of any freet
+
+### **`POST /api/comment/:freetId` - Create a new comment for a certain Freet**
+
+**Body**
+
+- `content` *{string}* - The content of the comment
+
+**Returns**
+
+- A success message
+- A object with the created freet
+
+**Throws**
+
+- `403` if the user is not logged in
+- `400` If the freet content is empty or a stream of empty spaces
+- `413` If the freet content is more than 140 characters long
+
+# Reactions
+
+### **`GET /api/reactions?freetId=id` - Get all reactions posted on a certain Freet**
+
+**Returns**
+
+- An array of reactions created under the Freet with the freetID that `freetId` follows
+
+**Throws**
+
+- `400` if `freetDd` is not given
+- `403` if the user is not logged in
+- `404` if `freetId` is not a recognized freetId of any freet
+
+### **`POST /api/reactions/:freetId` - Create a new reaction for a certain Freet**
+
+**Body**
+
+- `emotion` *{string}* - The emotion of the reaction
+
+**Returns**
+
+- A success message
+- A object with the created reaction
+
+**Throws**
+
+- `403` if the user is not logged in
+- `400` If the freetId is not given
+
+### **`PUT /api/reactions/:freetId` - Update an existing reaction for a certain Freet**
+
+**Body**
+
+- `emotion` *{string}* - The new emotion of the reaction
+
+**Returns**
+
+- A success message
+- A object with the created reaction
+
+**Throws**
+
+- `403` if the user is not logged in
+- `400` If the freetId is not given
+- `404` if `freetId` is not a recognized freetId of any freet
+
+### **`DELETE/api/reactions/:freetId` - Delete an existing reaction for a certain Freet**
+
+**Returns**
+
+- A success message
+
+**Throws**
+
+- `403` if the user is not logged in
+- `400` If the freetId is incorrect
+- `404` if `freetId` is not a recognized freetId of any freet
+
+# Controversy Warning
+
+### **`GET /api/controversy?freetId=id` - Get the warning on a certain Freet**
+
+**Returns**
+
+- An array of reactions created under the Freet with the freetID that `freetId` follows
+
+**Throws**
+
+- `400` if `freetDd` is not given
+- `403` if the user is not logged in
+- `404` if `freetId` is not a recognized freetId of any freet
+
+### **`POST /api/controversy/:freetId` - Create a new warning for a certain Freet**
+
+**Body**
+
+- `active` *{boolean}* - True if this warning should start out as active without needing to reach the threshold of user votes
+
+**Returns**
+
+- A success message
+- A object with the created reaction
+
+**Throws**
+
+- `403` if the user is not logged in
+- `400` If the freetId is not given
+
+### **`PUT /api/controversy/:freetId` - Update an existing warning for a certain Freet**
+
+**Returns**
+
+- A success message
+- A object with the created reaction
+
+**Throws**
+
+- `403` if the user is not logged in
+- `400` If the freetId is not given
+- `404` if `freetId` is not a recognized freetId of any freet
+
+### **`DELETE /api/controversy/:freetId` - Delete an existing warning for a certain Freet**
+
+**Returns**
+
+- A success message
+
+**Throws**
+
+- `403` if the user is not logged in
+- `400` If the freetId is incorrect
+- `404` if `freetId` is not a recognized freetId of any freet
