@@ -51,7 +51,7 @@ const isValidEmotion = async (
   next();
 };
 
-const userHasReactedAlready = async (
+const userHasNotReactedToFreet = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -73,7 +73,7 @@ const userHasReactedAlready = async (
   next();
 };
 
-const userCanDeleteReaction = async (
+const userHasReactedToFreet = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -83,11 +83,9 @@ const userCanDeleteReaction = async (
     freet._id,
     req.session.userId
   );
-
-  if (reaction) {
+  if (!reaction) {
     res.status(403).json({
-      error:
-        'UserId already has a reaction associtated with this post. Use a PUT request to update it, or DELETE it before POSTing a new one.'
+      error: 'UserId does not have a reaction associtated with this post.'
     });
     return;
   }
@@ -95,4 +93,9 @@ const userCanDeleteReaction = async (
   next();
 };
 
-export {isValidEmotion, isValidReactionId, userHasReactedAlready};
+export {
+  isValidEmotion,
+  isValidReactionId,
+  userHasNotReactedToFreet,
+  userHasReactedToFreet
+};

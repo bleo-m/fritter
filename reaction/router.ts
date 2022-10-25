@@ -70,7 +70,7 @@ router.post(
     freetValidator.isFreetExistsInParam,
     userValidator.isUserLoggedIn,
     reactionValidator.isValidEmotion,
-    reactionValidator.userHasReactedAlready
+    reactionValidator.userHasNotReactedToFreet
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
@@ -103,7 +103,8 @@ router.put(
   [
     freetValidator.isFreetExistsInParam,
     userValidator.isUserLoggedIn,
-    reactionValidator.isValidEmotion
+    reactionValidator.isValidEmotion,
+    reactionValidator.userHasReactedToFreet
   ],
   async (req: Request, res: Response) => {
     const reaction = await ReactionCollection.updateOne(
@@ -131,14 +132,18 @@ router.put(
  */
 router.delete(
   '/:freetId',
-  [freetValidator.isFreetExistsInParam, userValidator.isUserLoggedIn],
+  [
+    freetValidator.isFreetExistsInParam,
+    userValidator.isUserLoggedIn,
+    reactionValidator.userHasReactedToFreet
+  ],
   async (req: Request, res: Response) => {
     const success = await ReactionCollection.deleteOneByFreetIdAndUserId(
       req.params.freetId,
       req.session.userId
     );
     if (success) {
-      res.status(201).json({
+      res.status(200).json({
         message: 'Your reaction was deleted successfully.'
       });
     } else {
