@@ -124,6 +124,18 @@ class CommentCollection {
   static async deleteMany(authorId: Types.ObjectId | string): Promise<void> {
     await CommentModel.deleteMany({authorId});
   }
+
+  /**
+   * Delete all the Comments by the given author
+   *
+   * @param {string} freet - The id of the freet associated with the Comments
+   */
+  static async deleteManyByFreetId(
+    freetId: Types.ObjectId | string
+  ): Promise<void> {
+    const freet = await FreetCollection.findOne(freetId);
+    const isComplete = await CommentModel.deleteMany({freet});
+  }
 }
 
 export default CommentCollection;

@@ -2,8 +2,13 @@ import type {NextFunction, Request, Response} from 'express';
 import express from 'express';
 import FreetCollection from './collection';
 import ControversyWarningCollection from '../controversy_warning/collection';
+import CommentCollection from '../comment/collection';
+import ReactionCollection from '../reaction/collection';
 import * as userValidator from '../user/middleware';
 import * as freetValidator from '../freet/middleware';
+import * as commentValidator from '../comment/middleware';
+import * as reactionValidator from '../reaction/middleware';
+import * as controversyWarningValidator from '../controversy_warning/middleware';
 import * as util from './util';
 
 const router = express.Router();
@@ -99,7 +104,11 @@ router.delete(
     freetValidator.isValidFreetModifier
   ],
   async (req: Request, res: Response) => {
+    await CommentCollection.deleteManyByFreetId(req.params.freetId);
+    await ReactionCollection.deleteManyByFreetId(req.params.freetId);
+    await ControversyWarningCollection.deleteOneByFreetId(req.params.freetId);
     await FreetCollection.deleteOne(req.params.freetId);
+
     res.status(200).json({
       message: 'Your freet was deleted successfully.'
     });

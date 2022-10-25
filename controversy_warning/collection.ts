@@ -100,6 +100,22 @@ class ControversyWarningCollection {
     return controversyWarning !== null;
   }
 
+  /**
+   * Delete a controversyWarning associated with the given freetId.
+   *
+   * @param {string} freetId - The controversyWarningId of controversyWarning to delete
+   * @return {Promise<Boolean>} - true if the controversyWarning has been deleted, false otherwise
+   */
+  static async deleteOneByFreetId(
+    freetId: Types.ObjectId | string
+  ): Promise<boolean> {
+    const freet = await FreetCollection.findOne(freetId);
+    const controversyWarning = await ControversyWarningModel.deleteOne({
+      freetId: freet._id
+    });
+    return controversyWarning !== null;
+  }
+
   static async addVote(
     freetId: Types.ObjectId | string,
     userId: Types.ObjectId | string

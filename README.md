@@ -185,18 +185,6 @@ This renders the `index.html` file that will be used to interact with the back
 
 - An array of all freets sorted in descending order by date modified
 
-### **`GET /api/freet?userId=USERNAME` - Get freets only from users that a user follows**
-
-**Returns**
-
-- An array of freets created by the users that username `userId` follows
-
-**Throws**
-
-- `400` if `userid` is not given
-- `403` if the user is not logged in
-- `404` if `userid` is not a recognized username of any user
-
 ### **`GET /api/freets?author=USERNAME` - Get freets by author**
 
 **Returns**
